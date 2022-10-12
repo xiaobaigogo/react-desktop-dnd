@@ -1,18 +1,49 @@
 import Style from './App.module.scss'
-import GridContainer from "./components/GridContainer";
-import {useState} from "react";
-import {LayoutController} from "./components/LayoutController";
+import GridContainer, { GridItem } from "./components/GridContainer";
+import { useState } from "react";
+import { GridController } from "./components/GridController";
+
+const createBlock = (content: string) => {
+    return <div style={ {
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#ccc'
+    } }>{ content }</div>
+}
 
 function App() {
-    const [ctr, setCtr] = useState<LayoutController | null>(null)
+    const [ ctr, setCtr ] = useState<GridController | null>(null)
+
+    const gridItems: GridItem[] = [
+        { id: '1', x: 0, y: 0, w: 1, h: 1, element: createBlock('1') },
+        { id: '2', x: 1, y: 0, w: 1, h: 1, element: createBlock('2') },
+        { id: '3', x: 2, y: 0, w: 1, h: 1, element: createBlock('3') },
+        { id: '4', x: 3, y: 0, w: 1, h: 1, element: createBlock('4') },
+        { id: '5', x: 4, y: 0, w: 1, h: 1, element: createBlock('5') },
+        { id: '6', x: 0, y: 1, w: 1, h: 1, element: createBlock('6') },
+        { id: '7', x: 1, y: 2, w: 1, h: 1, element: createBlock('7') },
+        { id: '8', x: 2, y: 2, w: 1, h: 1, element: createBlock('8') },
+        { id: '9', x: 3, y: 2, w: 1, h: 1, element: createBlock('9') },
+        { id: '10', x: 4, y: 2, w: 1, h: 1, element: createBlock('10') },
+    ]
 
     return (
-        <div className={Style.app}>
-            <div className={Style.panel}>
-                控制项列表...
+        <div className={ Style.app }>
+            <div className={ Style.panel }>
+                { !ctr
+                    ? '布局加载中...'
+                    : <>
+                        <div>样式控制</div>
+                    </> }
             </div>
-            <div className={Style.workspace}>
-                <GridContainer onLoad={setCtr}/>
+            <div className={ Style.workspace }>
+                <GridContainer
+                    items={ gridItems }
+                    onLoad={ setCtr }
+                    onReLayout={ layout => {
+                        console.log(JSON.stringify(layout, null, 4))
+                    } }/>
             </div>
         </div>
     )
