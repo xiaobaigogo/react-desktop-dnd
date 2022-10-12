@@ -1,34 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import Style from './App.module.scss'
+import GridContainer from "./components/GridContainer";
+import {useState} from "react";
+import {LayoutController} from "./components/LayoutController";
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [ctr, setCtr] = useState<LayoutController | null>(null)
 
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    return (
+        <div className={Style.app}>
+            <div className={Style.panel}>
+                控制项列表...
+            </div>
+            <div className={Style.workspace}>
+                <GridContainer onLoad={setCtr}/>
+            </div>
+        </div>
+    )
 }
 
 export default App
