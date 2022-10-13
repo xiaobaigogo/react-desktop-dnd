@@ -20,13 +20,35 @@ export class GridController {
     }
 
     /**
-     * @description 无参: 控制类同步到界面
-     * @description 有参: 界面同步到控制类
-     * @param layout 可选, 新的布局存储
+     * @description 设置更新函数 (更新到界面上)
+     * @param updater
      */
-    syncLayout(layout?: Layout[]) {
-        if(!!layout) this.#layout = layout
-        else this.updater(this.#layout)
+    setUpdater(updater: (layout: Layout[]) => void) {
+
+    }
+
+    /**
+     * @description 界面布局同步到控制类
+     * @param layout 布局信息
+     */
+    syncLayout(layout: Layout[]) {
+        this.#layout = layout
+    }
+
+    /**
+     * @description 更新界面布局
+     * @param layout 布局信息
+     */
+    setLayout(layout: Layout[]) {
+        this.#layout = layout
+        this.updater(this.#layout)
+    }
+
+    /**
+     * @description 获取布局信息 (一份复制, 可读)
+     */
+    getLayout(): Layout[] {
+        return JSON.parse(JSON.stringify(this.#layout))
     }
 
     /**
@@ -45,9 +67,33 @@ export class GridController {
             const try_parse = JSON.parse(layoutStr)
             this.updater(try_parse)
             this.#layout = try_parse
-        }
-        catch (e) {
+        } catch (e) {
             throw e
+        }
+    }
+
+    /**
+     * @description 设置某项的大小
+     * @param id 目标id
+     * @param to 目标新大小 (可选择设置一项或两项)
+     */
+    setSize(id: string, to: { w?: number, h?: number }) {
+        const _target = this.#layout.find(item => item.i === id)
+        if (!_target) throw new Error(`No item with id '${id}'`)
+        else {
+            _target.w = to.w ?? _target.w
+            _target.h = to.h ?? _target.h
+            console.log(_target, this.#layout)
+            this.updater(this.#layout)
+        }
+    }
+
+    /**
+     * @description 销毁, 清除 rc
+     */
+    dispose() {
+        this.#layout = []
+        this.updater = () => {
         }
     }
 }

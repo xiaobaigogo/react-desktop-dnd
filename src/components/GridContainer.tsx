@@ -111,18 +111,27 @@ export default (props: GridContainerProps) => {
         onReLayout,
     } = props
 
-    const [ layout, setLayout ] = useState<Layout[]>(items.map(item => {
+    const [ layout, _setLayout ] = useState<Layout[]>(items.map(item => {
         const { id, x, y, w, h } = item
         return {
             i: id,
             x, y, w, h
         }
     }))
-    const _ctr = new GridController(setLayout, rows, cols)
+    const _ctr = new GridController(_setLayout, rows, cols)
 
     useLayoutEffect(() => {
         onLoad?.(_ctr)
     }, [])
+    setTimeout(() => {
+        _setLayout([
+            { i: '1', x: 1, y: 0, w: 1, h: 1 },
+            { i: '2', x: 0, y: 0, w: 1, h: 1 },
+        ])
+    }, 2000)
+    // useLayoutEffect(() => {
+    //
+    // }, [])
 
     return <div
         className={ className }
@@ -137,9 +146,9 @@ export default (props: GridContainerProps) => {
             width={ width } layout={ layout }
             margin={ gap } containerPadding={ padding }
             rowHeight={ cellHeight }
-            isBounded={ true } isResizable={ false }
+            isBounded={ true } isResizable={ true }
             onLayoutChange={ newLayout => {
-                setLayout(newLayout)
+                _setLayout(newLayout)
                 _ctr.syncLayout(newLayout)
                 onReLayout?.(newLayout)
             } }>
