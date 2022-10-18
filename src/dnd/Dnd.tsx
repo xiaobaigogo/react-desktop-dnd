@@ -1,4 +1,4 @@
-import Style from './App.module.scss'
+import Style from './Dnd.module.scss'
 import GridContainer, { GridItem } from "./components/GridContainer";
 import {useEffect, useInsertionEffect, useState} from "react";
 import { GridController } from "./components/GridController";
@@ -12,7 +12,7 @@ const createBlock = (content: string) => {
     } }>{ content }</div>
 }
 
-function App() {
+function Dnd() {
     const [ ctr, setCtr ] = useState<GridController | null>(null)
 
     const gridItems: GridItem[] = [
@@ -60,4 +60,4 @@ function App() {
     )
 }
 
-export default App
+export default Dnd

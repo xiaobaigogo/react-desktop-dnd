@@ -1,11 +1,11 @@
 import './index.css'
 import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
-import App from './App'
+import Dnd from './dnd/Dnd'
 
 createRoot(document.getElementById('root') as HTMLElement)
     .render(
         // <StrictMode>
-            <App/>
+            <Dnd/>
         // </StrictMode>
     )
