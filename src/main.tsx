@@ -1,11 +1,6 @@
 import './index.css'
-import {StrictMode} from 'react'
-import {createRoot} from 'react-dom/client'
-import Dnd from './dnd/Dnd'
+import { createRoot } from 'react-dom/client'
+import SortableImpl from "./SortableImpl";
 
 createRoot(document.getElementById('root') as HTMLElement)
-    .render(
-        // <StrictMode>
-            <Dnd/>
-        // </StrictMode>
-    )
+    .render(<SortableImpl/>)
