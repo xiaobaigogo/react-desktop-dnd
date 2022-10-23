@@ -71,6 +71,13 @@ export type GridDeskProps = {
         margin?: number
     },
     /**
+     * @description event callback on item
+     */
+    cellEvents?: {
+        click?: (item: GridDeskItem) => void
+        rightClick?: (item: GridDeskItem) => void
+    }
+    /**
      * @description options passed to `sortablejs`
      */
     sortableOptions?: Options
@@ -178,9 +185,16 @@ export default function GridDesk(props: GridDeskProps) {
     if(new Set(props.data.map(_ => _.id)).size !== props.data.length)
         throw new Error('Duplicate id exists.')
 
-    const { cellOptions, data, onLoad, sortableOptions, style } = props
-    const _cellWidth = cellOptions?.width ?? cellOptions?.size ?? 50
-    const _cellHeight = cellOptions?.height ?? cellOptions?.size ?? 50
+    const { cellOptions, data, onLoad, sortableOptions, style, cellEvents } = props
+
+    const _cellStyle: CSSProperties = {
+        margin: cellOptions?.margin ?? 5,
+        width: cellOptions?.width ?? cellOptions?.size ?? 50,
+        height: cellOptions?.height ?? cellOptions?.size ?? 50,
+        boxSizing: 'border-box',
+        display: 'inline-block',
+        overflow: 'hidden',
+    }
 
     const _container = useRef<HTMLDivElement>(null)
     const [ gridList, setGridList ] = useState(data)
@@ -193,7 +207,7 @@ export default function GridDesk(props: GridDeskProps) {
         return () => {
             controller.destroy()
         }
-    }, [ _container ])
+    }, [])
 
     return (
         <div className="grid-desk__container"
@@ -210,15 +224,16 @@ export default function GridDesk(props: GridDeskProps) {
                         <div className="grid-desk__cell"
                              key={ item.id } title={ item.tooltip }
                              data-id={ item.id } data-name={ item.name }
-                             style={ {
-                                 margin: 5, padding: 5,
-                                 border: 'solid 1px #ccc',
-                                 background: '#fff',
-                                 width: _cellWidth,
-                                 height: _cellHeight,
-                                 boxSizing: 'border-box',
-                                 display: 'inline-block',
-                                 overflow: 'hidden',
+                             style={ _cellStyle }
+                             onClick={ (e) => {
+                                 e.preventDefault()
+                                 e.stopPropagation()
+                                 cellEvents?.click?.(item)
+                             } }
+                             onContextMenu={ (e) => {
+                                 e.preventDefault()
+                                 e.stopPropagation()
+                                 cellEvents?.rightClick?.(item)
                              } }>
                             { item.inner }
                         </div>

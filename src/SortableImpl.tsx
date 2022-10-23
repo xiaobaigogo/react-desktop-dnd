@@ -9,41 +9,44 @@ const itemStyle = {
 }
 
 export default function SortableImpl() {
-    const [ count, setCount ] = useState(20)
-    const gridData: GridDeskItem[] = new Array(count)
+    const gridData: GridDeskItem[] = new Array(20)
         .fill(0)
         .map((_, idx) => ({
             id: idx + '',
             name: `name: ${ idx }`,
-            inner: <div>I`m { idx }</div>
+            inner: <div style={ {
+                width: '100%',
+                height: '100%',
+                border: 'solid 1px #ccc',
+                background: '#fff',
+            } }>I`m { idx }</div>
         }))
 
     const [ ctr, setCtr ] = useState<GridDeskController>()
 
     const handleRemove = useCallback(() => {
-        setCount(c => {
-            ctr?.remove(c - 1 + '')
-            return c - 1
-        })
-    }, [ ctr, count ])
+        ctr?.remove(0 + '')
+    }, [ ctr ])
     const handleAdd = useCallback(() => {
-        setCount(c => {
-            ctr?.append({
-                id: c + '',
-                inner: <div>I`m { c }</div>
-            })
-            return c + 1
+        ctr?.append({
+            id: '20',
+            inner: <div style={ {
+                border: 'solid 1px #ccc',
+                background: '#fff',
+                width: '100%',
+                height: '100%',
+            } }>I`m { 20 }</div>
         })
-    }, [ ctr, count ])
+    }, [ ctr ])
     const handleOrder = useCallback(() => {
         ctr?.fromIdOrder(
-            new Array(count)
+            new Array(20)
                 .fill(0)
                 .map((_, idx) => idx)
                 .sort((a, b) => Math.random() > 0.5 ? 1 : -1)
                 .map(_ => _ + '')
         )
-    }, [ ctr, count ])
+    }, [ ctr ])
     const handleIdOrder = useCallback(() => {
         const arr = ctr?.toIdOrder()
         alert(arr?.join(' | ') ?? '无')
@@ -51,13 +54,23 @@ export default function SortableImpl() {
 
     return (
         <div style={ {} }>
-            <p style={ { color: '#fff' } }>curr: { count }</p>
             <button onClick={ handleRemove }>remove</button>
             <button onClick={ handleAdd }>add</button>
             <button onClick={ handleIdOrder }>id order</button>
             <button onClick={ handleOrder }>rand order</button>
             <br/>
-            <GridDesk data={ gridData } onLoad={ setCtr }/>
+            <GridDesk data={ gridData }
+                      onLoad={ setCtr }
+                      cellEvents={ {
+                          click: item => {
+                              item.inner = <></>
+                              alert('clicked: ' + JSON.stringify(item, null, 4))
+                          },
+                          rightClick: item => {
+                              item.inner = <></>
+                              alert('rightClicked: ' + JSON.stringify(item, null, 4))
+                          }
+                      } }/>
         </div>
     )
 }
