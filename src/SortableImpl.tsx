@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
-import GridDesk, { GridDeskController, GridDeskItem } from "./GridDesk/GridDeskImpl";
+import {useCallback, useState} from "react";
+import GridDesk, {GridDeskController, GridDeskItem} from "./GridDesk/GridDeskImpl";
 
 const itemStyle = {
     width: '100px',
@@ -13,31 +13,31 @@ export default function SortableImpl() {
         .fill(0)
         .map((_, idx) => ({
             id: idx + '',
-            name: `name: ${ idx }`,
-            inner: <div style={ {
+            name: `name: ${idx}`,
+            inner: <div style={{
                 width: '100%',
                 height: '100%',
                 border: 'solid 1px #ccc',
                 background: '#fff',
-            } }>I`m { idx }</div>
+            }}>I`m {idx}</div>
         }))
 
-    const [ ctr, setCtr ] = useState<GridDeskController>()
+    const [ctr, setCtr] = useState<GridDeskController>()
 
     const handleRemove = useCallback(() => {
         ctr?.remove(0 + '')
-    }, [ ctr ])
+    }, [ctr])
     const handleAdd = useCallback(() => {
         ctr?.append({
             id: '20',
-            inner: <div style={ {
+            inner: <div style={{
                 border: 'solid 1px #ccc',
                 background: '#fff',
                 width: '100%',
                 height: '100%',
-            } }>I`m { 20 }</div>
+            }}>I`m {20}</div>
         })
-    }, [ ctr ])
+    }, [ctr])
     const handleOrder = useCallback(() => {
         ctr?.fromIdOrder(
             new Array(20)
@@ -46,22 +46,28 @@ export default function SortableImpl() {
                 .sort((a, b) => Math.random() > 0.5 ? 1 : -1)
                 .map(_ => _ + '')
         )
-    }, [ ctr ])
+    }, [ctr])
     const handleIdOrder = useCallback(() => {
         const arr = ctr?.toIdOrder()
         alert(arr?.join(' | ') ?? '无')
-    }, [ ctr ])
+    }, [ctr])
+
+    const [cellSize, setCellSize] = useState('40')
 
     return (
-        <div style={ {} }>
-            <button onClick={ handleRemove }>remove</button>
-            <button onClick={ handleAdd }>add</button>
-            <button onClick={ handleIdOrder }>id order</button>
-            <button onClick={ handleOrder }>rand order</button>
+        <div style={{}}>
+            <button onClick={handleRemove}>remove</button>
+            <button onClick={handleAdd}>add</button>
+            <button onClick={handleIdOrder}>id order</button>
+            <button onClick={handleOrder}>rand order</button>
+            <input value={cellSize} type="number" onChange={(e) => setCellSize(e.target.value)}/>
             <br/>
-            <GridDesk data={ gridData }
-                      onLoad={ setCtr }
-                      cellEvents={ {
+            <GridDesk data={gridData}
+                      onLoad={setCtr}
+                      cellOptions={{
+                          size: parseInt(cellSize)
+                      }}
+                      cellEvents={{
                           click: item => {
                               item.inner = <></>
                               alert('clicked: ' + JSON.stringify(item, null, 4))
@@ -70,7 +76,7 @@ export default function SortableImpl() {
                               item.inner = <></>
                               alert('rightClicked: ' + JSON.stringify(item, null, 4))
                           }
-                      } }/>
+                      }}/>
         </div>
     )
 }
