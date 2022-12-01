@@ -38,6 +38,10 @@ export type GridDeskItem = {
  */
 export type GridDeskContextMenuNode = {
     /**
+     * @description 是否带分隔线, 为 true 则当前项的下方带有分割线
+     */
+    separator: boolean
+    /**
      * @description 展示文本
      */
     title: string
