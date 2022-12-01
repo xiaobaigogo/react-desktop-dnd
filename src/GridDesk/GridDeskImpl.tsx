@@ -39,8 +39,9 @@ export type GridDeskItem = {
 export type GridDeskContextMenuNode = {
     /**
      * @description 是否带分隔线, 为 true 则当前项的下方带有分割线
+     * @default false 默认不添加
      */
-    separator: boolean
+    separator?: boolean
     /**
      * @description 展示文本
      */
@@ -57,6 +58,10 @@ export type GridDeskContextMenuNode = {
      * @description 子菜单, hover 展示
      */
     sub?: GridDeskContextMenuNode[]
+    /**
+     * @description 点击回调
+     */
+    cb: () => void
 }
 
 /**
