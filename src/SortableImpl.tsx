@@ -1,5 +1,5 @@
 import {useCallback, useState} from "react";
-import GridDesk, {GridDeskController, GridDeskItem} from "./GridDesk/GridDeskImpl";
+import GridDesk, {GridDeskContextMenuNode, GridDeskController, GridDeskItem} from "./GridDesk/GridDeskImpl";
 
 const itemStyle = {
     width: '100px',
@@ -52,7 +52,9 @@ export default function SortableImpl() {
         alert(arr?.join(' | ') ?? '无')
     }, [ctr])
 
-    const [cellSize, setCellSize] = useState('40')
+    const [cellSize, setCellSize] = useState('60')
+
+    // const contextMenuConfig = useState()
 
     return (
         <div style={{}}>
@@ -67,14 +69,43 @@ export default function SortableImpl() {
                       cellOptions={{
                           size: parseInt(cellSize)
                       }}
+                      contextMenuConfig={{
+                          cell: (item: GridDeskItem | null) => {
+                                console.log(item)
+                              return [
+                                { 
+                                    title: item?.name || 'name',
+                                    cb: () => console.log(item)
+                                }
+                            ]
+                          },
+                          blank: [
+                            { 
+                                title: '左键', 
+                                cb: () => {console.log('点击左键')},
+                                sub: [
+                                    { 
+                                        title: '左键一',
+                                        sub: [
+                                            {
+                                                title: '左键11',
+                                            }
+                                        ]
+                                    }, 
+                                    { title: '左键二' }
+                                ] 
+                            }, 
+                            { title: '右键' }
+                          ]
+                      }}
                       cellEvents={{
                           click: item => {
-                              item.inner = <></>
-                              alert('clicked: ' + JSON.stringify(item, null, 4))
+                            //   item.inner = <></>
+                            //   alert('clicked: ' + JSON.stringify(item, null, 4))
                           },
                           rightClick: item => {
-                              item.inner = <></>
-                              alert('rightClicked: ' + JSON.stringify(item, null, 4))
+                            //   item.inner = <></>
+                            //   alert('rightClicked: ' + JSON.stringify(item, null, 4))
                           }
                       }}/>
         </div>

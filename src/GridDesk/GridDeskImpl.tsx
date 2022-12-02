@@ -1,7 +1,8 @@
-import {CSSProperties, Dispatch, RefObject, SetStateAction, useEffect, useRef, useState} from "react";
+import {CSSProperties, Dispatch, PropsWithChildren, RefObject, SetStateAction, useCallback, useEffect, useRef, useState} from "react";
 import Sortable from "sortablejs";
 import type {Options} from "sortablejs";
-import "./index.css";
+import "./index.scss";
+import GridDeskContextMenu from "./GridDeskContextMenu";
 
 /**
  * @description default options for sortablejs
@@ -41,6 +42,10 @@ export type GridDeskContextMenuNode = {
      * @description 展示文本
      */
     title: string
+    /**
+     * @description 回调函数
+     */
+    cb?: (item?: GridDeskItem) => void
     /**
      * @description 左侧图标
      */
@@ -217,7 +222,14 @@ export default function GridDesk(props: GridDeskProps) {
     if (new Set(props.data.map(_ => _.id)).size !== props.data.length)
         throw new Error('Duplicate id exists.')
 
-    const {cellOptions, data, onLoad, sortableOptions, style, cellEvents} = props
+    const {
+        cellOptions, 
+        data, 
+        onLoad, 
+        sortableOptions, 
+        style, 
+        cellEvents
+    } = props
 
     const _cellStyle: CSSProperties = {
         margin: cellOptions?.margin ?? 5,
@@ -232,6 +244,8 @@ export default function GridDesk(props: GridDeskProps) {
     const [gridList, setGridList] = useState(data)
 
     useEffect(() => {
+        console.log(_container)
+        console.log(gridDeskContextMenuRef)
         const controller = new GridDeskController(_container, setGridList, sortableOptions)
 
         onLoad?.(controller)
@@ -241,6 +255,33 @@ export default function GridDesk(props: GridDeskProps) {
         }
     }, [])
 
+    // 右键菜单
+    const [contextMenuConfig, setContextMenuConfig] = useState<GridDeskContextMenuNode[]>([])
+    const [showContextMenu, setShowContextMenu] = useState(false)
+    const gridDeskContextMenuRef = useRef<HTMLDivElement>(null)
+
+    const onContextMenu = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, type: keyof GridDeskProps['contextMenuConfig'],  item?: GridDeskItem) => {
+        e.preventDefault()
+        e.stopPropagation()
+        console.log(gridDeskContextMenuRef.current)
+        if (gridDeskContextMenuRef.current === null) return
+        //  cellEvents?.rightClick?.(item)
+        setShowContextMenu(true)
+
+        // 传入参数
+        const isFun = props.contextMenuConfig[type]
+        const nodes = typeof isFun === 'function'
+            ? (item? isFun(item) : [])
+            : (isFun ?? [])
+        // const nodes: GridDeskContextMenuNode[] = []
+        console.log(nodes)
+        setContextMenuConfig(nodes)
+        
+        // 设置位置
+        gridDeskContextMenuRef.current!.style.top = e.clientY + 'px'
+        gridDeskContextMenuRef.current!.style.left = e.clientX + 'px'
+    }
+
     return (
         <div className="grid-desk__container"
              ref={_container}
@@ -249,7 +290,20 @@ export default function GridDesk(props: GridDeskProps) {
                  width: '100%', minWidth: '100%', maxWidth: '100%',
                  height: '100%', minHeight: '100%', maxHeight: '100%',
                  flexShrink: 0, display: 'block', overflow: 'auto'
-             }}>
+             }}
+            onContextMenu={(e) => onContextMenu(e, 'blank')}
+            onClick={(e) => setShowContextMenu(false)}
+             >
+            { 
+                <div 
+                    style={{
+                        visibility: showContextMenu? 'visible' : 'hidden',
+                        position: 'fixed'
+                    }}
+                    ref={gridDeskContextMenuRef}
+                >
+                    <GridDeskContextMenu nodes={contextMenuConfig}/>
+                </div>}
             {
                 gridList.map(item => {
                     return (
@@ -262,11 +316,7 @@ export default function GridDesk(props: GridDeskProps) {
                                  e.stopPropagation()
                                  cellEvents?.click?.(item)
                              }}
-                             onContextMenu={(e) => {
-                                 e.preventDefault()
-                                 e.stopPropagation()
-                                 cellEvents?.rightClick?.(item)
-                             }}>
+                            onContextMenu={(e) => onContextMenu(e,'cell', item)}>
                             {item.inner}
                         </div>
                     )

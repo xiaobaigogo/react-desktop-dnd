@@ -1,0 +1,23 @@
+.grid-desk-item__ghost {
+    opacity: 0.5;
+}
+
+.grid-desk-context-menu {
+    /* position: fixed; */
+    white-space: nowrap;
+    background-color: #fff;
+    border-radius: 4px;
+    // padding: 10px;
+    box-shadow: 0 0 10px blue;
+
+    &-item {
+        &:hover {
+            cursor: pointer;
+            background-color: red;
+        }
+        background-color: #fff;
+        border-radius: 4px;
+        padding: 10px;
+        box-shadow: 0 0 10px blue;
+    }
+}
